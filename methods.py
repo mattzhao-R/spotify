@@ -4,11 +4,17 @@ import warnings
 warnings.filterwarnings('ignore')
 from collections import Counter
 from tqdm.notebook import tqdm
+
 import json
 import os
 import time
+import csv
 
 import dev_creds
+from objects import song_artist
+
+import requests
+from bs4 import BeautifulSoup
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -38,12 +44,65 @@ def search_getid(worker,song_artist):
         if ((song_artist.song == out_track) and (song_artist.artist == out_artist)):
             return(track_id)
 
-# create row matching track_id to song_artist combination (function used with parallelization to construct link table)
-def table_ids(worker, song_artist):
-    track_id = search_getid(worker,song_artist)
+# takes in track_id and returns list of relevant audio features
+def get_features(worker, track_id):
+    ft = worker.audio_features(track_id)
+    feats = list(ft[0].values())
+    del feats[-7:-2]
+    
+    return(feats)
+
+# create row of link table matching song_artist to track_id and audio feats (function used with parallelization to construct link table)
+def create_table(worker, song_artist):
+    try:
+        track_id = search_getid(worker, song_artist)
+        feats = get_features(worker, track_id)
+    except:
+        file = open('./modified/table_ids.csv', 'a')
+        writer = csv.writer(file)
+        row = [song_artist] + [np.nan for i in range(0,14)]
+        writer.writerow(row)
+        file.close()
+        return
     
     file = open('./modified/table_ids.csv', 'a')
     writer = csv.writer(file)
-    row = [song_artist,track_id]
+    row = [song_artist,track_id] + feats
     writer.writerow(row)
     file.close()
+    return
+
+# get genre from last.fm
+def last_fm(song_artist):
+    song = song_artist.song
+    artist = song_artist.artist
+    
+    artist_query = "+".join(artist.split(" "))
+    song_query = "+".join(song.split(" "))
+    
+    query = 'https://www.last.fm/music/' + artist_query + '/_/' + song_query
+    
+    try:
+        req = requests.get(query, allow_redirects=False)
+    except:
+        genre = 'redirect error'
+    
+    try:
+        sample = BeautifulSoup(req.content, 'html.parser')
+    except:
+        pass
+    
+    try:
+        section = sample.find(name='section', class_ = 'catalogue-tags')
+        genre = section.find(name='li').string
+    except:
+        genre = np.nan
+    
+    file = open('./modified/genres.csv', 'a')
+    writer = csv.writer(file)
+    row = [song_artist,genre]
+    writer.writerow(row)
+    file.close()
+    
+    #return genre
+    return
