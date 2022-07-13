@@ -3,15 +3,17 @@ from threading import Thread
 from time import sleep
 from numpy.random import randint
 import logging
+import csv
+from tqdm import tqdm
 
 import dev_creds
-import methods
+from methods import sp_worker
 import objects
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
-def parallel(full_data,function)
+def parallel(full_data,function):
     logger = logging.getLogger(__name__)
 
     full_data.append("STOP")
@@ -19,7 +21,7 @@ def parallel(full_data,function)
     data_queue = Queue()
     worker_queue = Queue()
 
-    worker_ids = list(range(5)) 
+    worker_ids = list(range(6)) 
     workers = {i: sp_worker(i) for i in worker_ids}
     for worker_id in worker_ids:
         worker_queue.put(worker_id)
@@ -63,20 +65,15 @@ def parallel(full_data,function)
     # processes are still running
     logger.info("Adding data to data queue")
     for d in full_data:
-        full_data.put(d)
+        data_queue.put(d)
 
     # Wait for all queue listening processes to complete, this happens when the queue listener returns
     logger.info("Waiting for Queue listener threads to complete")
     for p in processes:
         p.join()
 
-    # Quit all the web workers elegantly in the background
     logger.info("Tearing down workers")
-    for b in workers.values():
-        b.quit()
-
-    print(end-start, " iterations took", time.time()-start_time, "to run")
-
+    return
 
 def blank():
     pass

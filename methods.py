@@ -10,7 +10,7 @@ import os
 import time
 import csv
 
-import dev_creds
+from dev_creds import alt_creds
 from objects import song_artist
 
 import requests
@@ -26,7 +26,7 @@ sns.set(style='whitegrid', color_codes=True, rc={'figure.figsize':(11,8)}, font_
 
 # creates spotipy api object using alt cred (function used with parallelization to create multiple spotipy workers)
 def sp_worker(alt):
-    cid, secret = dev_creds.alt_creds(alt)
+    cid, secret = alt_creds(alt)
     client_credentials_manager = SpotifyClientCredentials(client_id=cid,client_secret=secret)
     worker = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
     return worker
@@ -52,28 +52,34 @@ def get_features(worker, track_id):
     
     return(feats)
 
-# create row of link table matching song_artist to track_id and audio feats (function used with parallelization to construct link table)
-def create_table(worker, song_artist):
-    try:
-        track_id = search_getid(worker, song_artist)
-        feats = get_features(worker, track_id)
-    except:
-        file = open('./modified/table_ids.csv', 'a')
-        writer = csv.writer(file)
-        row = [song_artist] + [np.nan for i in range(0,14)]
-        writer.writerow(row)
-        file.close()
-        return
-    
-    file = open('./modified/table_ids.csv', 'a')
+# general function for writing a list to a row of a csv
+def row_writer(row, path):
+    file = open(path, 'a')
     writer = csv.writer(file)
-    row = [song_artist,track_id] + feats
     writer.writerow(row)
     file.close()
     return
 
+
+# create row of link table matching song_artist to track_id and audio feats (function used with parallelization to construct link table)
+def id_feats(worker, song_artist, file_name = 'id_feats', write = True):
+    try:
+        track_id = search_getid(worker, song_artist)
+        feats = get_features(worker, track_id)
+    except:
+        feats = [np.nan for i in range(0,14)]
+    
+    path = './modified/' + file_name + '.csv'
+    
+    if(write):
+        row = [song_artist,track_id] + feats
+        row_writer(row,path)
+        return
+    else:
+        return track_id, feats
+
 # get genre from last.fm
-def last_fm(song_artist):
+def get_genre(song_artist, file_name = 'genres', write = True):
     song = song_artist.song
     artist = song_artist.artist
     
@@ -98,11 +104,21 @@ def last_fm(song_artist):
     except:
         genre = np.nan
     
-    file = open('./modified/genres.csv', 'a')
-    writer = csv.writer(file)
-    row = [song_artist,genre]
-    writer.writerow(row)
-    file.close()
+    path = './modified/' + file_name + '.csv'
     
-    #return genre
+    if(write):
+        row = [song_artist,genre]
+        row_writer(row,path)
+        return
+    else:
+        return genre
+
+# combines row_writer, id_feats, and last_fm to create a table of track_id, audio feats, and genre using parallelization
+def create_table(worker, song_artist, fname = 'full_table'):
+    track_id, feats = id_feats(worker, song_artist, write = False)
+    genre = get_genre(song_artist, write = False)
+    
+    path = './modified/' + fname + '.csv'
+    row = [track_id,feats,genre]
+    row_writer(row,path)
     return
