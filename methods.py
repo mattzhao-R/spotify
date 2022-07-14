@@ -67,7 +67,8 @@ def id_feats(worker, song_artist, file_name = 'id_feats', write = True):
         track_id = search_getid(worker, song_artist)
         feats = get_features(worker, track_id)
     except:
-        feats = [np.nan for i in range(0,14)]
+        track_id = np.nan
+        feats = [np.nan for i in range(0,13)]
     
     path = './modified/' + file_name + '.csv'
     
@@ -119,7 +120,7 @@ def create_table(worker, song_artist, fname = 'full_table'):
     genre = get_genre(song_artist, write = False)
     
     path = './modified/' + fname + '.csv'
-    row = [track_id,feats,genre]
+    row = [track_id] + feats + [genre]
     row_writer(row,path)
     return
 
@@ -154,10 +155,9 @@ def scrape_artGen(query):
     return genre
 
 # uses artist_query and scrape_artGen functions to add artist:genre mappings to a given dictionary for genre imputation
-def table_artGen(dic, artist):
+def table_artGen(artist):
     query = artist_query(artist)
     genre = scrape_artGen(query)
     
-    dic[artist]=genre
-    return
+    return genre
 
