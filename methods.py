@@ -122,3 +122,42 @@ def create_table(worker, song_artist, fname = 'full_table'):
     row = [track_id,feats,genre]
     row_writer(row,path)
     return
+
+# make query for scraping artist genre info on last.fm
+def artist_query(artist):
+    if (len(artist.split(' '))>1):
+        temp = "+".join(artist.split(' '))
+        query = 'https://www.last.fm/music/' + temp
+    else:
+        query = 'https://www.last.fm/music/' + artist
+    
+    return query
+
+# scrape artist genre from last.fm
+def scrape_artGen(query):
+    try:
+        req = requests.get(query)
+    except:
+        genre = 'redirect error'
+    
+    try:
+        soup = BeautifulSoup(req.content, 'html.parser')
+    except:
+        pass
+    
+    try:
+        section = soup.find(name='section', class_ = 'catalogue-tags')
+        genre = section.find(name='li').string
+    except:
+        genre = np.nan
+    
+    return genre
+
+# uses artist_query and scrape_artGen functions to add artist:genre mappings to a given dictionary for genre imputation
+def table_artGen(dic, artist):
+    query = artist_query(artist)
+    genre = scrape_artGen(query)
+    
+    dic[artist]=genre
+    return
+
