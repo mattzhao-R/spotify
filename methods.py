@@ -54,7 +54,7 @@ def get_features(worker, track_id):
 
 # general function for writing a list to a row of a csv
 def row_writer(row, path):
-    file = open(path, 'a')
+    file = open(path, 'a', encoding='utf-8')
     writer = csv.writer(file)
     writer.writerow(row)
     file.close()
@@ -121,6 +121,17 @@ def create_table(worker, song_artist, fname = 'full_table'):
     
     path = './modified/' + fname + '.csv'
     row = [track_id] + feats + [genre]
+    row_writer(row,path)
+    return
+
+# combines row_writer, id_feats, and last_fm to create a table of track_id, audio feats, and genre using parallelization
+def table_noGen(worker, arg, fname = 'feats_table'):
+    idx = arg[0]
+    song_artist = arg[1]
+    track_id, feats = id_feats(worker, song_artist, write = False)
+    
+    path = './modified/' + fname + '.csv'
+    row = [idx, track_id] + feats
     row_writer(row,path)
     return
 
