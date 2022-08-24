@@ -55,7 +55,10 @@ def week_pattern(week,df):
               '#abd9ab','#cb7f75','#419e71','#8f6ea6','#c4406c']
     c = colors[:c_num]
     
-    return graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c)
+    graph['msPlayed'] = round(graph['msPlayed']/60000,2)
+    
+    fig = graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c).figure
+    return fig
     
 def day_pattern(date,df):
     y = date.day
@@ -64,7 +67,7 @@ def day_pattern(date,df):
     
     df['hour'] = pd.to_datetime(df['time'].astype(str)).dt.hour 
     
-    temp = df[df['date'].isin([spec_date,datetime.date(year=y,month=m,day=d+1)])]
+    temp = df[df['date'].isin([date,datetime.date(year=y,month=m,day=d+1)])]
     temp = temp[((temp['day'] == d) & (temp['hour']>=7))|((temp['day'] == d+1) & (temp['hour']<7))]
     graph = temp.groupby(['hour','new_gen']).agg({'msPlayed':'sum'})
     
@@ -76,4 +79,7 @@ def day_pattern(date,df):
               '#abd9ab','#cb7f75','#419e71','#8f6ea6','#c4406c']
     c = colors[:c_num]
     
-    return graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c)
+    graph['msPlayed'] = round(graph['msPlayed']/60000,2)
+    
+    fig = graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c).figure
+    return fig

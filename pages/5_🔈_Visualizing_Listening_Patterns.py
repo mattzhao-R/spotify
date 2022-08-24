@@ -20,8 +20,6 @@ In this section, we get to see what our listening habits look like across time u
 
 """)
 
-st.write(os.getcwd())
-
 # prep dataframe for calendar viz
 df = pd.read_csv('./final/final_newGen.csv')
 df['endTime'] = pd.to_datetime(df['endTime'], format='%Y-%m-%d %H:%M:%S')
@@ -60,7 +58,7 @@ if option == 'Month':
         l = st.radio('Week or Day Pattern?', ('Week','Day'))
     
     if l == 'Week':
-        weeks = dated['week'].unique()
+        weeks = dated['week'].unique().tolist()
         boxes = []
         
         for w in weeks:
@@ -76,20 +74,25 @@ if option == 'Month':
                 first = date_DoW.date() - datetime.timedelta(days = int(DoW))
 
                 c = selection.checkbox("Week of {} {}, {}".format(months[first.month-1],first.day,first.year))
-        boxes.append(c)
+            boxes.append(c)
         
         selected = [w for (w, b) in zip(weeks, boxes) if b]
         
-        fig = week_pattern(dated,selected[0])
+        fig = week_pattern(selected[0],dated)
         st.pyplot(fig)
+        
         
     if l == 'Day':
         start = dated['date'].iloc[0]
         end = dated['date'].iloc[len(dated['date'])-1]
         
         with selection:
-            spec_date = st.date_input(value=start, min_value=start, max_value=end)
-            
-        fig = day_pattern(spec_date,dated)
-        st.pyplot(fig)
-            
+            spec_date = st.date_input(label = 'Select a date', value = start, min_value=start, max_value=end)
+        
+        valid_dates = dated['date'].unique().tolist()
+        
+        if (spec_date in valid_dates):
+            fig = day_pattern(spec_date,dated)
+            st.pyplot(fig)
+        else:
+            st.write("There are 330 valid dates out of 365 available, please try again.")            
