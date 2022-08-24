@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import sys
 
 from viz_methods import *
 
@@ -16,7 +17,7 @@ st.sidebar.header("Visualizing Listening Patterns")
 
 st.markdown("""
 
-## In this section, we get to see what our listening habits look like across time using the newly generated clusters. 
+In this section, we get to see what our listening habits look like across time using the newly generated clusters. 
 
 """)
 
