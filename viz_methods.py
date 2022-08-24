@@ -2,20 +2,17 @@ import numpy as np
 import pandas as pd
 import warnings
 warnings.filterwarnings('ignore')
-from collections import Counter
-from tqdm.notebook import tqdm
 
-import json
 import os
 import time
 import csv
 import datetime
 
 import matplotlib.pyplot as plt
-import seaborn as sns
-from plotly_calplot import calplot
+#import seaborn as sns
+#from plotly_calplot import calplot
 
-
+'''
 def heat_12m(df):
     temp = df.groupby('date').agg({'msPlayed':'sum'})
     heat_12m = temp.reset_index()
@@ -44,6 +41,7 @@ def cluster_12m(df):
     )
     
     fig.write_image("./graphs/12m_cluster.jpeg")
+'''
 
 def week_pattern(week,df):
     temp = df[df['week'] == week]
@@ -57,7 +55,7 @@ def week_pattern(week,df):
     
     return graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c)
     
-def day_pattern(date,df): # not sure what the input will look like from user, need to change based on how they select the date on website
+def day_pattern(date,df):
     y = date.day
     m = date.month
     d = date.day
