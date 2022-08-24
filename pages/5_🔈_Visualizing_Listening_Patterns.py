@@ -1,11 +1,10 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import sys
+import os
 
 from viz_methods import *
 
-sys.path.append('../')
 
 st.set_page_config(
     page_title="Visualizing Listening Patterns",
@@ -21,8 +20,10 @@ In this section, we get to see what our listening habits look like across time u
 
 """)
 
+st.write(os.getcwd())
+
 # prep dataframe for calendar viz
-df = pd.read_csv('final/final_newGen.csv')
+df = pd.read_csv('./final/final_newGen.csv')
 df['endTime'] = pd.to_datetime(df['endTime'], format='%Y-%m-%d %H:%M:%S')
 df['EST_time'] = df['endTime'] - datetime.timedelta(hours=5)
 df = df[['endTime','EST_time','artistName','trackName','msPlayed','genre','clusters','new_gen']]
