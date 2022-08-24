@@ -50,7 +50,9 @@ def week_pattern(week,df):
     temp = graph.reset_index()
     c_num = len(pd.unique(temp['new_gen']))
     
-    colors = ['#B05BDB','#16a4d8','#60dbe8','#71DB5B','#efdf48','#f9a52c','#F97171']
+    colors = ['#f2ac5b','#91a4bd','#ab5b34','#f0de58','#3373b4',
+              '#383948','#949597','#ede1ce','#d9b58c','#988a55',
+              '#abd9ab','#cb7f75','#419e71','#8f6ea6','#c4406c']
     c = colors[:c_num]
     
     return graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c)
@@ -69,7 +71,9 @@ def day_pattern(date,df):
     temp = graph.reset_index()
     c_num = len(pd.unique(temp['new_gen']))
     
-    colors = ['#B05BDB','#16a4d8','#60dbe8','#71DB5B','#efdf48','#f9a52c','#F97171']
+    colors = ['#f2ac5b','#91a4bd','#ab5b34','#f0de58','#3373b4',
+              '#383948','#949597','#ede1ce','#d9b58c','#988a55',
+              '#abd9ab','#cb7f75','#419e71','#8f6ea6','#c4406c']
     c = colors[:c_num]
     
     return graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c)
