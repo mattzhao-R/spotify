@@ -73,6 +73,8 @@ def week_pattern(week,df):
     
     graph['msPlayed'] = round(graph['msPlayed']/60000,2)
     
+    months = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    
     DoW = pd.DatetimeIndex(df[df['week']==week]['EST_time']).isocalendar()['day'][0]
     date_DoW = pd.DatetimeIndex(df[df['week']==week]['EST_time']).isocalendar().index[0]
     first = date_DoW.date() - datetime.timedelta(days = int(DoW))
