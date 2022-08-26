@@ -54,10 +54,8 @@ def hour_display(h):
     
 def date_display(date):
     months = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-    md = "{} {}, ".format(months[date.month-1],date.day)
-    temp = "{}".format(date.year)
-    y = temp[2:4]
-    return md+y
+    mdy = "{} {}, {}".format(months[date.month-1],date.day,date.year)
+    return mdy
 
 def week_pattern(week,df):
     temp = df[df['week'] == week]
@@ -75,8 +73,14 @@ def week_pattern(week,df):
     
     graph['msPlayed'] = round(graph['msPlayed']/60000,2)
     
+    DoW = pd.DatetimeIndex(df[df['week']==week]['EST_time']).isocalendar()['day'][0]
+    date_DoW = pd.DatetimeIndex(df[df['week']==week]['EST_time']).isocalendar().index[0]
+    first = date_DoW.date() - datetime.timedelta(days = int(DoW))
+
+    week_name = "Week of {} {}, {}".format(months[first.month-1],first.day,first.year)
+    
     fig = graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c, rot = 30, 
-                                           xlabel = "", ylabel = "Minutes Listened", legend = True).figure
+                                           xlabel = "Day of Week", ylabel = "Minutes Listened", title = week_name).figure
     return fig
     
 def day_pattern(date,df):
@@ -102,6 +106,8 @@ def day_pattern(date,df):
     
     graph['msPlayed'] = round(graph['msPlayed']/60000,2)
     
+    day_name = date_display(date)
+    
     fig = graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c, rot = 30, 
-                                           xlabel = "Time of Day", ylabel = "Minutes Listened", legend = True).figure
+                                           xlabel = "Time of Day", ylabel = "Minutes Listened", title=day_name).figure
     return fig

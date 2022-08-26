@@ -103,6 +103,8 @@ if option == 'Week/Day Schedules':
         
     if l == 'Day':
         start = dated['date'].iloc[0]
+        if ((start.month == 5) & (start.year == 2021)):
+            start = datetime.date(year=2021,month=5,day=9)
         end = dated['date'].iloc[len(dated['date'])-1]
         
         with selection:
