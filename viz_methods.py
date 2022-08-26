@@ -42,9 +42,27 @@ def cluster_12m(df):
     
     fig.write_image("./graphs/12m_cluster.jpeg")
 '''
+def hour_display(h):
+    h = int(h)
+    if h>12:
+        temp = str(h-12)
+        return temp + " PM"
+    elif h==0:
+        return "12 AM"
+    else:
+        return str(h) + " AM"
+    
+def date_display(date):
+    months = ['Jan', 'Feb', 'Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    md = "{} {}, ".format(months[date.month-1],date.day)
+    temp = "{}".format(date.year)
+    y = temp[2:4]
+    return md+y
 
 def week_pattern(week,df):
     temp = df[df['week'] == week]
+    temp['date'] = temp['date'].apply(lambda x: date_display(x))
+    
     graph = temp.groupby(['date','new_gen']).agg({'msPlayed':'sum'})
     
     temp = graph.reset_index()
@@ -57,7 +75,8 @@ def week_pattern(week,df):
     
     graph['msPlayed'] = round(graph['msPlayed']/60000,2)
     
-    fig = graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c).figure
+    fig = graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c, rot = 30, 
+                                           xlabel = "", ylabel = "Minutes Listened", legend = True).figure
     return fig
     
 def day_pattern(date,df):
@@ -69,6 +88,8 @@ def day_pattern(date,df):
     
     temp = df[df['date'].isin([date,datetime.date(year=y,month=m,day=d+1)])]
     temp = temp[((temp['day'] == d) & (temp['hour']>=7))|((temp['day'] == d+1) & (temp['hour']<7))]
+    temp['hour'] = temp['hour'].apply(lambda x: hour_display(x))
+    
     graph = temp.groupby(['hour','new_gen']).agg({'msPlayed':'sum'})
     
     temp = graph.reset_index()
@@ -81,5 +102,6 @@ def day_pattern(date,df):
     
     graph['msPlayed'] = round(graph['msPlayed']/60000,2)
     
-    fig = graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c).figure
+    fig = graph['msPlayed'].unstack().plot.bar(stacked=True,figsize=(10,8), color = c, rot = 30, 
+                                           xlabel = "Time of Day", ylabel = "Minutes Listened", legend = True).figure
     return fig
