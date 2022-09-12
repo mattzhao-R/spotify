@@ -37,7 +37,7 @@ With this data, we can replicate some of the fun statistics from Spotify Wrapped
 """
 )
 
-artists, songs, genres = st.columns([4,5,3])
+artists, songs, genres = st.columns([3,5,3])
 
 def min_hour(minutes):
     t = int(minutes)
