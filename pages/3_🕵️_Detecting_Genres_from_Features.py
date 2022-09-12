@@ -16,7 +16,7 @@ The first goal of my analysis was to use machine learning to see what features w
 I then checked to see if there was any significant collinearity in my dataset using a correlation heatmap as shown below.
 """
 )
-st.image('./graphs/corr_heatmap.png')
+st.image('./graphs/corr_heatmap.png',use_column_width = True)
 
 st.markdown(
 """
