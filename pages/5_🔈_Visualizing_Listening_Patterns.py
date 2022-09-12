@@ -16,7 +16,11 @@ st.sidebar.header("Visualizing Listening Patterns")
 
 st.markdown("""
 
-In this section, we get to see what our listening habits look like across time using the newly generated clusters. 
+In this section, I visualize my listening patterns using the newly created clusters. 
+
+The Year Calendars display my listening habits at the year-level, with frequency showing which days I listened to music the most and cluster showing the most listened-to cluster for each day.
+
+At the Week/Day level, you can see my weekly or daily listening breakdowns and sort through them by month. You can also compare weeks to see how my listening patterns change from week to week within each month. 
 
 """)
 
