@@ -1,22 +1,11 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import seaborn as sns
 
 st.set_page_config(
     page_title="Detecting Genres from Features",
     page_icon="🕵️"
 )
-
-df = pd.read_csv('./final/final_table.csv')
-dummy_col = ['key', 'mode', 'time_signature']
-processing = pd.get_dummies(df, columns=dummy_col, drop_first=False)
-from sklearn.preprocessing import LabelEncoder
-
-label_encoder = LabelEncoder()
-processing['genre_label'] = label_encoder.fit_transform(processing['genre'])
-X = processing.drop(labels = ['endTime','artistName','trackName','msPlayed','genre','genre_label'], axis=1, inplace=False)
-y = processing['genre_label']
 
 st.markdown(
 """
@@ -27,10 +16,7 @@ The first goal of my analysis was to use machine learning to see what features w
 I then checked to see if there was any significant collinearity in my dataset using a correlation heatmap as shown below.
 """
 )
-
-fig = plt.figure(figsize=(10, 4))
-sns.heatmap(X.corr(), cmap="PiYG")
-st.pyplot(fig)
+st.image('./graphs/corr_heatmap.png')
 
 st.markdown(
 """
