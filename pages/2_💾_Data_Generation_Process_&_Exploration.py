@@ -54,10 +54,10 @@ with artists:
     st.table(temp)
     
 with songs:
-    temp = df.groupby('trackName',as_index=False).agg({'msPlayed':'sum'}).sort_values(by='msPlayed', axis=0,ascending=False).iloc[:5,:]
+    temp = df.groupby(['trackName','artistName'],as_index=False).agg({'msPlayed':'sum'}).sort_values(by='msPlayed',axis=0,ascending=False).iloc[:5,:]
     temp['msPlayed'] = (temp['msPlayed']/60000).apply(lambda x: min_hour(x))
-    temp.rename(columns={'trackName':'Song','msPlayed':'Duration'},inplace=True)
-    temp.set_index(pd.Index([1, 2, 3, 4,5]),inplace=True)
+    temp.rename(columns={'trackName':'Song','artistName':'Artist','msPlayed':'Duration'},inplace=True)
+    temp.set_index(pd.Index([1, 2, 3, 4,5]),inplace=True)    
     st.write('Top 5 Songs')
     st.table(temp)
 
