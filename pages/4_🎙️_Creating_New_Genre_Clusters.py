@@ -21,7 +21,7 @@ st.markdown(
 Once I had added the new cluster assignments to each song, I wanted to see how these compared to the actual genres my songs had been assigned. To do this, I looked at the 5 most common genres for each cluster to see the type of music each cluster roughly corresponded to. You can see an example for some of the clusters below:
 """
 )
-df = pd.read_csv('./final/final_newGen.csv')
+final_df = pd.read_csv('./final/final_newGen.csv')
 
 col1, col2, col3 = st.columns(3)
 with col1:
